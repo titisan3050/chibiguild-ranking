@@ -24,7 +24,7 @@ LIMITS = {
     "tower": 100000,
     "rebirths": 1000000,
     "dragon": 10000000,
-    "tier": 4,
+    "tier": 5,          # 5 強化天蛇ミズチ
     "tierKills": 99999,
 }
 
