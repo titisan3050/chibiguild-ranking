@@ -1,5 +1,5 @@
-#updated 2026-11-03 19:40 JST
-#players 37
+#updated 2026-11-03 19:50 JST
+#players 38
 0	かえで_toto	42044
 0	ryusei46	37307
 0	＠RUKA	34649
