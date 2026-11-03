@@ -1,5 +1,5 @@
-#updated 2026-11-03 21:25 JST
-#players 52
+#updated 2026-11-03 21:30 JST
+#players 54
 0	かえで_toto	42044
 0	＠RUKA	38930
 0	みやのみずき	38000
