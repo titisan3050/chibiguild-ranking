@@ -1,4 +1,4 @@
-#updated 2026-11-03 16:35 JST
+#updated 2026-11-03 16:38 JST
 #players 9
 0	かえで_toto	42044
 0	ryusei46	14030
@@ -9,14 +9,6 @@
 0	くみちょう４６	1615
 0	tuna³	1229
 0	wam san	1212
-1	ryusei46	120
-1	かえで_toto	120
-1	布靴下｡	103
-1	shegaro09	99
-1	ゆうばり	99
-1	いながみ	46
-1	tuna³	1
-1	くみちょう４６	1
 2	かえで_toto	130
 2	ryusei46	70
 3	かえで_toto	43
