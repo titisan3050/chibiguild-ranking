@@ -20,7 +20,7 @@ CODE_RE = re.compile(r"IGR1([0-9a-f.]+)-(\d{6})")
 # ありえない値は弾く（ゲームの上限より少し広め）
 LIMITS = {
     "atk": 400000,      # 攻撃力の桁 ×1000（10 の 400 乗まで）
-    "stage": 120,       # 狩場は ST120 まで
+    "kills": 9 * 10 ** 15,   # 総討伐数（2026-11-03 以前の登録では最高ステージだった）
     "tower": 100000,
     "rebirths": 1000000,
     "dragon": 10000000,
@@ -62,7 +62,7 @@ def decode(code: str):
         return None
     if is_del:
         return name, None
-    keys = ["atk", "stage", "tower", "rebirths", "dragon", "tier", "tierKills"]
+    keys = ["atk", "kills", "tower", "rebirths", "dragon", "tier", "tierKills"]
     rec = dict(zip(keys, v))
     for k in keys:
         if rec[k] < 0 or rec[k] > LIMITS[k]:
@@ -71,6 +71,8 @@ def decode(code: str):
 
 
 JST = timezone(timedelta(hours=9))
+# この時刻より前の登録は、2 番目の数が「最高ステージ」だった（今は「総討伐数」）。古い登録の討伐数は 0 として扱う
+KILLS_SINCE = datetime(2026, 11, 3, 7, 45, tzinfo=timezone.utc)
 
 
 def row_time(cell: str):
@@ -129,8 +131,11 @@ def main():
                 best.pop(name, None)
                 removed += 1
                 break
+            t = row_time(row[0])
+            if t is None or t < KILLS_SINCE:
+                rec["kills"] = 0
             b = best.setdefault(name, {k: 0 for k in rec})
-            for k in ("atk", "stage", "tower", "rebirths", "dragon"):
+            for k in ("atk", "kills", "tower", "rebirths", "dragon"):
                 b[k] = max(b[k], rec[k])
             # 竜の格は「格 × 100000 + その討伐数」で比べる
             b["raid"] = max(b.get("raid", 0), rec["tier"] * 100000 + rec["tierKills"])
@@ -139,7 +144,7 @@ def main():
         if not found and any("IGR1" in c for c in row):
             bad += 1
 
-    cats = ["atk", "stage", "tower", "rebirths", "dragon", "raid"]
+    cats = ["atk", "kills", "tower", "rebirths", "dragon", "raid"]
     jst = timezone(timedelta(hours=9))
     lines = [
         "#updated " + datetime.now(jst).strftime("%Y-%m-%d %H:%M") + " JST",

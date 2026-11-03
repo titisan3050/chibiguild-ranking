@@ -107,6 +107,7 @@ function sheet_() {
 }
 
 function upsert_(name, code) {
+  PropertiesService.getScriptProperties().setProperty('DIRTY', '1');   // 新しい登録があった → 次の kickGithub で集計を動かす
   const sh = sheet_();
   const vals = sh.getDataRange().getValues();
   const now = new Date().toISOString();
@@ -125,6 +126,33 @@ function csv_() {
   const lines = [];
   for (let r = 1; r < vals.length; r++) lines.push(q(vals[r][0] instanceof Date ? vals[r][0].toISOString() : vals[r][0]) + ',' + q(vals[r][2]));
   return out_('time,code\n' + lines.join('\n'));
+}
+
+// ---- GitHub の集計を動かす（GitHub の定期実行は遅れたり止まったりするため、こちらから 5 分ごとに頼む）----
+// 準備：プロジェクトの設定 → スクリプト プロパティに GH_TOKEN（chibiguild-ranking の Actions を読み書きできるトークン）を入れ、
+//       エディタで installTrigger を 1 回実行する。新しい登録があったときだけ GitHub に頼む
+function kickGithub() {
+  const props = PropertiesService.getScriptProperties();
+  const token = props.getProperty('GH_TOKEN');
+  if (!token) return;
+  const daily = new Date().getUTCHours() === 0 && new Date().getUTCMinutes() < 5;   // 1 日 1 回は変わりがなくても動かす
+  if (props.getProperty('DIRTY') !== '1' && !daily) return;
+  const res = UrlFetchApp.fetch('https://api.github.com/repos/titisan3050/chibiguild-ranking/actions/workflows/ranking.yml/dispatches', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' },
+    payload: JSON.stringify({ ref: 'main' }),
+    muteHttpExceptions: true
+  });
+  if (res.getResponseCode() === 204) props.setProperty('DIRTY', '0');
+  else Logger.log('GitHub: ' + res.getResponseCode() + ' ' + res.getContentText());
+}
+
+function installTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'kickGithub') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('kickGithub').timeBased().everyMinutes(5).create();
+  PropertiesService.getScriptProperties().setProperty('DIRTY', '1');
+  kickGithub();
 }
 
 // 手元の確認用：エディタで実行すると、テストの登録 → 削除が auto シートに入る
