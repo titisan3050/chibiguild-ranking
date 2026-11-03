@@ -1,5 +1,5 @@
-#updated 2026-11-03 17:22 JST
-#players 10
+#updated 2026-11-03 17:25 JST
+#players 11
 0	かえで_toto	42044
 0	-瑕人-	19747
 0	ryusei46	17922
