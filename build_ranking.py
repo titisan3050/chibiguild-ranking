@@ -124,6 +124,19 @@ def main():
         for n, v in items[:TOP]:
             lines.append(f"{ci}\t{n}\t{v}")
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    # 中身が前と同じなら書き換えない（5 分ごとに動くので、変わったときだけ保存する）。
+    # ただし 1 日 1 回は更新時刻を書き直す（長く更新がないと GitHub が定期実行を止めるため）
+    try:
+        with open(OUT, encoding="utf-8") as fp:
+            old = fp.read().splitlines()
+    except FileNotFoundError:
+        old = []
+    old_body = [l for l in old if not l.startswith("#updated ")]
+    new_body = [l for l in lines if not l.startswith("#updated ")]
+    old_day = next((l[9:19] for l in old if l.startswith("#updated ")), "")
+    if old_body == new_body and old_day == lines[0][9:19]:
+        print(f"unchanged players={len(best)} codes_ok={ok} removed={removed} codes_bad={bad}")
+        return
     with open(OUT, "w", encoding="utf-8", newline="\n") as fp:
         fp.write("\n".join(lines) + "\n")
     print(f"players={len(best)} codes_ok={ok} removed={removed} codes_bad={bad} -> {OUT}")

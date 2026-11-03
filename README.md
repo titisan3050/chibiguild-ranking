@@ -1,6 +1,6 @@
 # ちびギルド放置録 ワールド全体ランキング
 
-ワールドの「ランキング登録」で出る登録コードを Google フォームで集め、1 時間ごとに集計して
+ワールドの「ランキング登録」で出る登録コードを Google フォームで集め、5 分ごとに集計して
 `docs/ranking.txt` を GitHub Pages で公開します。ワールドは
 `https://titisan3050.github.io/chibiguild-ranking/ranking.txt` を読み込んで表示します。
 すべて無料の範囲で動きます。
@@ -31,7 +31,7 @@
 1. リポジトリの **Settings → Secrets and variables → Actions → Variables** で、次の 2 つを追加する。
    - `SHEET_CSV_URL`：手順 2-3 の CSV の URL
    - `FORM_URL`：手順 2-4 の `https://forms.gle/…`
-2. **Actions** タブ → `ranking` → **Run workflow** で 1 回動かす。以後は毎時自動で更新される。
+2. **Actions** タブ → `ranking` → **Run workflow** で 1 回動かす。以後は 5 分ごとに自動で集計され、中身が変わったときだけ更新される。
    - 初回に Actions を有効にするか聞かれたら有効にする。
 
 ## しくみ

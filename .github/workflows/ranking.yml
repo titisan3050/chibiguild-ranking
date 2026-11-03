@@ -2,11 +2,15 @@ name: ranking
 
 on:
   schedule:
-    - cron: "7 * * * *"   # 毎時 7 分（UTC）
+    - cron: "*/5 * * * *"   # 5 分ごと（GitHub の定期実行の最短。混んでいると遅れることがある）
   workflow_dispatch:      # Actions の画面から手で動かすこともできる
 
 permissions:
   contents: write
+
+concurrency:
+  group: ranking
+  cancel-in-progress: false
 
 jobs:
   build:
