@@ -46,7 +46,9 @@ def decode(code: str):
     if rank_check(body) != ck:
         return None
     f = body.split(".")
-    if len(f) != 9 or f[0] != "1":
+    # 削除コード：本文 = "0." + 名前（ワールドで「掲載 OFF」にして出したもの）
+    is_del = len(f) == 2 and f[0] == "0"
+    if not is_del and (len(f) != 9 or f[0] != "1"):
         return None
     hx = f[1]
     if len(hx) == 0 or len(hx) % 4 != 0:
@@ -59,6 +61,8 @@ def decode(code: str):
     name = re.sub(r"[\t\r\n#]", " ", name).strip()[:32]
     if not name:
         return None
+    if is_del:
+        return name, None
     keys = ["atk", "stage", "tower", "rebirths", "dragon", "tier", "tierKills"]
     rec = dict(zip(keys, v))
     for k in keys:
@@ -83,7 +87,7 @@ def main():
         print("SHEET_CSV_URL が設定されていない", file=sys.stderr)
 
     best = {}
-    ok = bad = 0
+    ok = bad = removed = 0
     for row in rows:
         found = False
         for cell in row:
@@ -92,6 +96,11 @@ def main():
                 continue
             found = True
             name, rec = d
+            if rec is None:
+                # 削除コード：それまでの記録を消す（あとで登録し直せばまた載る）
+                best.pop(name, None)
+                removed += 1
+                break
             b = best.setdefault(name, {k: 0 for k in rec})
             for k in ("atk", "stage", "tower", "rebirths", "dragon"):
                 b[k] = max(b[k], rec[k])
@@ -117,7 +126,7 @@ def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8", newline="\n") as fp:
         fp.write("\n".join(lines) + "\n")
-    print(f"players={len(best)} codes_ok={ok} codes_bad={bad} -> {OUT}")
+    print(f"players={len(best)} codes_ok={ok} removed={removed} codes_bad={bad} -> {OUT}")
 
 
 if __name__ == "__main__":
