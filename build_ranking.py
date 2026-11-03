@@ -71,20 +71,53 @@ def decode(code: str):
     return name, rec
 
 
+JST = timezone(timedelta(hours=9))
+
+
+def row_time(cell: str):
+    """フォームの「2026/11/03 13:08:53」（日本時間）と、自動登録の ISO 形式（UTC）を同じ物差しにする"""
+    cell = cell.strip()
+    for fmt in ("%Y/%m/%d %H:%M:%S", "%Y/%m/%d %H:%M"):
+        try:
+            return datetime.strptime(cell, fmt).replace(tzinfo=JST)
+        except ValueError:
+            pass
+    try:
+        return datetime.fromisoformat(cell.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def fetch_csv(url: str):
+    with urllib.request.urlopen(url, timeout=30) as r:
+        text = r.read().decode("utf-8-sig")
+    return list(csv.reader(io.StringIO(text)))
+
+
 def main():
     url = os.environ.get("SHEET_CSV_URL", "").strip()
+    auto = os.environ.get("AUTO_URL", "").strip()
     form = os.environ.get("FORM_URL", "").strip()
     rows = []
     if url:
-        with urllib.request.urlopen(url, timeout=30) as r:
-            text = r.read().decode("utf-8-sig")
-        rows = list(csv.reader(io.StringIO(text)))
+        rows += fetch_csv(url)[1:]
     elif len(sys.argv) > 1:
-        # 手元で試すとき：python build_ranking.py 回答.csv
-        with open(sys.argv[1], encoding="utf-8-sig") as fp:
-            rows = list(csv.reader(fp))
+        # 手元で試すとき：python build_ranking.py 回答.csv [自動登録.csv]
+        for path in sys.argv[1:]:
+            with open(path, encoding="utf-8-sig") as fp:
+                rows += list(csv.reader(fp))[1:]
     else:
         print("SHEET_CSV_URL が設定されていない", file=sys.stderr)
+    if auto:
+        # 自動登録の受け口（Apps Script）。?csv=1 で「time,code」を返す
+        try:
+            rows += fetch_csv(auto + ("&" if "?" in auto else "?") + "csv=1")[1:]
+        except Exception as ex:  # 受け口が止まっていても、フォームの分は集計する
+            print("自動登録を読めなかった:", ex, file=sys.stderr)
+    # 送られた順に処理する（削除のあとに登録し直した人は、また載る）
+    far = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    rows = [r for r in rows if r]
+    rows.sort(key=lambda r: row_time(r[0]) or far)
 
     best = {}
     ok = bad = removed = 0

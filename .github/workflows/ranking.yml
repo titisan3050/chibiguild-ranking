@@ -21,6 +21,7 @@ jobs:
         env:
           SHEET_CSV_URL: ${{ vars.SHEET_CSV_URL }}
           FORM_URL: ${{ vars.FORM_URL }}
+          AUTO_URL: ${{ vars.AUTO_URL }}
         run: python3 build_ranking.py
       - name: 変わっていたら保存
         run: |
