@@ -1,5 +1,5 @@
-#updated 2026-11-03 22:50 JST
-#players 64
+#updated 2026-11-03 22:55 JST
+#players 65
 0	-瑕人-	42452
 0	かえで_toto	42044
 0	みやのみずき	39666
