@@ -1,11 +1,10 @@
 # ちびギルド放置録：ワールド全体ランキングの集計
-#   Google フォームの回答（スプレッドシートを「ウェブに公開」した CSV）を読み、
+#   ワールドから自動で届いた登録（Apps Script の受け口 ?csv=1）を読み、
 #   登録コードを確かめて、1 人 1 件の最高記録にまとめ、docs/ranking.txt に書き出す。
 #   ワールドはこのファイルを GitHub Pages から読み込んで表示する。
 #
 #   環境変数
-#     SHEET_CSV_URL  回答シートの CSV の URL（必須。…/pub?gid=…&single=true&output=csv）
-#     FORM_URL       ワールドの板に出す登録フォームの短い URL（例 https://forms.gle/xxxx）
+#     AUTO_URL  自動登録の受け口（Apps Script のウェブアプリ …/exec）
 import csv
 import io
 import os
@@ -95,19 +94,15 @@ def fetch_csv(url: str):
 
 
 def main():
-    url = os.environ.get("SHEET_CSV_URL", "").strip()
     auto = os.environ.get("AUTO_URL", "").strip()
-    form = os.environ.get("FORM_URL", "").strip()
     rows = []
-    if url:
-        rows += fetch_csv(url)[1:]
-    elif len(sys.argv) > 1:
-        # 手元で試すとき：python build_ranking.py 回答.csv [自動登録.csv]
+    if len(sys.argv) > 1:
+        # 手元で試すとき：python build_ranking.py 自動登録.csv
         for path in sys.argv[1:]:
             with open(path, encoding="utf-8-sig") as fp:
                 rows += list(csv.reader(fp))[1:]
-    else:
-        print("SHEET_CSV_URL が設定されていない", file=sys.stderr)
+    elif not auto:
+        print("AUTO_URL が設定されていない", file=sys.stderr)
     if auto:
         # 自動登録の受け口（Apps Script）。?csv=1 で「time,code」を返す
         try:
@@ -148,7 +143,6 @@ def main():
     jst = timezone(timedelta(hours=9))
     lines = [
         "#updated " + datetime.now(jst).strftime("%Y-%m-%d %H:%M") + " JST",
-        "#form " + form,
         "#players " + str(len(best)),
     ]
     for ci, k in enumerate(cats):

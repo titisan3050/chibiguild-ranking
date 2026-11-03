@@ -1,62 +1,34 @@
 # ちびギルド放置録 ワールド全体ランキング
 
-ワールドの「ランキング登録」で出る登録コードを Google フォームで集め、5 分ごとに集計して
+ワールドが自動で送ってくる記録を Google Apps Script の受け口で受け取り、5 分ごとに集計して
 `docs/ranking.txt` を GitHub Pages で公開します。ワールドは
-`https://titisan3050.github.io/chibiguild-ranking/ranking.txt` を読み込んで表示します。
+`https://titisan3050.github.io/chibiguild-ranking/ranking.txt` を 1 分ごとに読み込んで表示します。
 すべて無料の範囲で動きます。
 
-## 1. GitHub（このフォルダを公開する）
+- 自動で届くのは、VRChat の設定で「信頼されていないURLを許可」を ON にしている人だけ
+  （ワールドは読み込みしかできないので、受け口の URL を 1 バイトずつ読みにくる形で送る。1 回およそ 2〜3 分）。
+- 板の「あなたの掲載」を OFF にすると、削除の合図を自動で送る。
 
-1. GitHub に `chibiguild-ranking` という名前の **Public** リポジトリを作り、このフォルダの中身を置く。
-2. リポジトリの **Settings → Pages** で
-   - Source: `Deploy from a branch`
-   - Branch: `main`、フォルダ: `/docs`
-   を選んで保存する。数分で `https://titisan3050.github.io/chibiguild-ranking/ranking.txt` が開けるようになる。
+## 受け口（Google Apps Script）
 
-## 2. Google フォーム（登録の受付）
+1. Google スプレッドシートを開き、**拡張機能 → Apps Script** を開く。
+2. `コード.gs` の中身を、このフォルダの `apps_script/Code.gs` に置き換えて保存する。
+3. **デプロイ → 新しいデプロイ → ウェブアプリ**（実行：自分／アクセス：全員）でデプロイし、URL（…/exec）をコピーする。
+4. GitHub の **Settings → Secrets and variables → Actions → Variables** に `AUTO_URL` として登録する。
+   ワールド（`IGBuilder.cs` の `RANK_AUTO_URL`）にも同じ URL を入れる。
 
-1. Google フォームで新しいフォームを作る。
-   - 質問は 1 つ：「登録コード」（記述式・必須）
-   - 設定 → 回答 → **メールアドレスを収集しない**（回答は公開されるため）
-2. 「回答」タブ → **スプレッドシートにリンク** → 新しいスプレッドシートを作る。
-3. スプレッドシートで **ファイル → 共有 → ウェブに公開**
-   - 「フォームの回答 1」シート、形式 **カンマ区切り形式（.csv）** を選んで公開
-   - 出てきた URL（`…/pub?gid=…&single=true&output=csv`）をコピーする
-4. フォームの「送信」→ リンク → **URL を短縮** にチェックして、`https://forms.gle/…` をコピーする。
-
-> ウェブに公開した CSV は誰でも見られます。中身は登録コード（名前と記録）と送信時刻だけです。
-
-## 3. GitHub に URL を登録して動かす
-
-1. リポジトリの **Settings → Secrets and variables → Actions → Variables** で、次の 2 つを追加する。
-   - `SHEET_CSV_URL`：手順 2-3 の CSV の URL
-   - `FORM_URL`：手順 2-4 の `https://forms.gle/…`
-2. **Actions** タブ → `ranking` → **Run workflow** で 1 回動かす。以後は 5 分ごとに自動で集計され、中身が変わったときだけ更新される。
-   - 初回に Actions を有効にするか聞かれたら有効にする。
-
-## 4. 自動登録の受け口（Google Apps Script）
-
-VRChat の設定で「信頼されていないURLを許可」を ON にしている人は、ワールドが記録を自動で送ります
-（ワールドは読み込みしかできないので、受け口の URL を 1 バイトずつ読みにくる形で送る。1 回およそ 3 分）。
-
-1. 手順 2 の回答のスプレッドシートを開き、**拡張機能 → Apps Script** を開く。
-2. 最初からある `コード.gs` の中身を全部消し、このフォルダの `apps_script/Code.gs` の中身を貼って保存する。
-3. 右上の **デプロイ → 新しいデプロイ** → 歯車から **ウェブアプリ** を選ぶ。
-   - 次のユーザーとして実行：**自分**
-   - アクセスできるユーザー：**全員**
-   - **デプロイ** を押し、権限の確認が出たら自分のアカウントで許可する
-     （「Google はこのアプリを確認していません」と出たら「詳細」→「（プロジェクト名）に移動」）。
-4. 表示された **ウェブアプリの URL**（`https://script.google.com/macros/s/…/exec`）をコピーする。
-5. GitHub の Variables に `AUTO_URL` としてその URL を追加する。ワールドにも同じ URL を組み込む。
-
-- 受け口は、同じスプレッドシートに `auto` シートを作り、1 人 1 行（最新の登録コード）で上書きする。
-- `…/exec?csv=1` で auto シートを CSV で返す（集計が読む）。
+- 受け口は同じスプレッドシートに `auto` シートを作り、1 人 1 行（最新の登録コード）で上書きする。`…/exec?csv=1` で CSV を返す。
 - スクリプトを直したときは **デプロイ → デプロイを管理 → 編集 → 新バージョン** で更新する（URL は変わらない）。
+
+## GitHub
+
+- Pages：`main` ブランチの `/docs`。
+- Actions：`ranking` が 5 分ごとに集計し、中身が変わったときだけ保存する（手で動かすときは Run workflow）。
 
 ## しくみ
 
 - 登録コード：`IGR1` + 本文 + `-` + 検査 6 桁。本文は 版・名前（文字コード 16 進）・攻撃力の桁（log10×1000）・
-  最高ステージ・塔・転生・竜討伐・竜の格・その討伐数。検査の計算はワールド（`IGGame.RankCheck`）と `build_ranking.py` で同じ。
-- 同じ名前で何回送っても、項目ごとに最高の値だけが残る。
-- 検査が合わないコードと、ありえない値（ステージ 121 以上など）は数えない。
-- 手元で試す：`python build_ranking.py 回答.csv`
+  最高ステージ・塔・転生・竜討伐・竜の格・その討伐数。検査の計算はワールド（`IGGame.RankCheck`）・`Code.gs`・`build_ranking.py` で同じ。
+- 削除コード（本文 = `0.` + 名前）が届くと、その人の記録を消す。あとで登録し直せばまた載る。
+- 項目ごとに最高の値だけが残る。検査が合わないコードと、ありえない値は数えない。
+- 手元で試す：`python build_ranking.py 自動登録.csv`
