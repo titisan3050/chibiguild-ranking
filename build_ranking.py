@@ -132,7 +132,8 @@ def main():
                 removed += 1
                 break
             t = row_time(row[0])
-            if t is None or t < KILLS_SINCE:
+            # 古いワールドのままの人は、この欄に最高ステージ（120 まで）を入れて送ってくる。討伐数としては数えない
+            if t is None or t < KILLS_SINCE or rec["kills"] <= 120:
                 rec["kills"] = 0
             b = best.setdefault(name, {k: 0 for k in rec})
             for k in ("atk", "kills", "tower", "rebirths", "dragon"):
