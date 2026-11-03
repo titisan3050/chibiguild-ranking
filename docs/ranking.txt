@@ -1,5 +1,5 @@
-#updated 2026-11-04 06:00 JST
-#players 75
+#updated 2026-11-04 06:05 JST
+#players 77
 0	ゆうばり	42974
 0	-瑕人-	42452
 0	かえで_toto	42044
