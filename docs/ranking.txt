@@ -1,9 +1,2 @@
-#updated 2026-11-03 14:56 JST
-#form https://forms.gle/xD7DBksJiGUZmEDb6
-#players 1
-0	TEST	30000
-1	TEST	50
-2	TEST	10
-3	TEST	3
-4	TEST	2
-5	TEST	100001
+#updated 2026-11-03 15:06 JST
+#players 0
