@@ -1,9 +1,9 @@
-#updated 2026-11-03 17:25 JST
-#players 11
+#updated 2026-11-03 17:30 JST
+#players 13
 0	かえで_toto	42044
 0	-瑕人-	19747
 0	ryusei46	17922
-0	shegaro09	8676
+0	shegaro09	11691
 0	ゆうばり	8330
 0	布靴下｡	7389
 0	いながみ	6966
@@ -13,13 +13,13 @@
 2	かえで_toto	130
 2	-瑕人-	102
 2	ryusei46	70
+2	shegaro09	44
 2	ゆうばり	38
-2	shegaro09	37
 2	布靴下｡	29
 3	-瑕人-	51
 3	ryusei46	50
 3	かえで_toto	43
-3	shegaro09	6
+3	shegaro09	19
 3	ゆうばり	6
 3	布靴下｡	2
 3	いながみ	1
