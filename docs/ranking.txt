@@ -1,5 +1,5 @@
-#updated 2026-11-03 22:15 JST
-#players 58
+#updated 2026-11-03 22:20 JST
+#players 60
 0	-瑕人-	42452
 0	かえで_toto	42044
 0	＠RUKA	38930
