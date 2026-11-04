@@ -1,5 +1,5 @@
-#updated 2026-11-04 20:20 JST
-#players 130
+#updated 2026-11-04 20:25 JST
+#players 133
 0	ゆうばり	44014
 0	むちょ。	43949
 0	＠RUKA	43774
