@@ -1,28 +1,28 @@
-#updated 2026-11-04 20:35 JST
+#updated 2026-11-04 20:40 JST
 #players 134
 0	-瑕人-	44492
 0	ゆうばり	44014
 0	むちょ。	43949
-0	＠RUKA	43774
+0	＠RUKA	43776
 0	みやのみずき	42473
 0	るるぴぃ	42107
 0	かえで_toto	42044
-0	omusubikororin	41128
+0	omusubikororin	41460
 0	shegaro09	40914
 0	-ぴあ-	40270
 1	てい！？	3980629
-1	＠RUKA	3843518
+1	＠RUKA	3882260
 1	-瑕人-	3124787
 1	non-0123	2830714
 1	むちょ。	2580667
 1	るるぴぃ	2456906
 1	ゆうばり	2351327
 1	Im_Otaro	1902199
-1	omusubikororin	1773832
+1	omusubikororin	1850917
 1	shegaro09	1687938
 2	ゆうばり	349
+2	＠RUKA	343
 2	むちょ。	341
-2	＠RUKA	341
 2	shegaro09	322
 2	omusubikororin	320
 2	みやのみずき	318
@@ -36,7 +36,7 @@
 3	＠RUKA	644
 3	みやのみずき	639
 3	るるぴぃ	500
-3	omusubikororin	461
+3	omusubikororin	486
 3	-ぴあ-	304
 3	かえで_toto	246
 3	shegaro09	237
@@ -48,15 +48,15 @@
 4	Im_Otaro	64
 4	omusubikororin	62
 4	かえで_toto	60
+4	＠RUKA	60
 4	SASAMIN43	58
-4	ryusei46	56
 5	むちょ。	600050
 5	omusubikororin	600011
 5	ゆうばり	600011
+5	＠RUKA	600008
 5	みやのみずき	600007
 5	-瑕人-	600005
 5	-ぴあ-	500025
 5	SASAMIN43	500008
 5	Lia。	500007
-5	＠RUKA	500005
 5	ぺんぎん０８	500004
