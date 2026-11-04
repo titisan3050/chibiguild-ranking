@@ -1,4 +1,4 @@
-#updated 2026-11-04 12:20 JST
+#updated 2026-11-04 12:25 JST
 #players 93
 0	ゆうばり	43207
 0	むちょ。	42984
@@ -6,10 +6,10 @@
 0	かえで_toto	42044
 0	＠RUKA	41700
 0	みやのみずき	41547
+0	omusubikororin	39307
 0	るるぴぃ	39145
 0	Lia。	38932
 0	Im_Otaro	38753
-0	omusubikororin	38426
 1	＠RUKA	2864423
 1	てい！？	2856887
 1	non-0123	2830714
@@ -37,7 +37,7 @@
 3	みやのみずき	347
 3	かえで_toto	246
 3	るるぴぃ	203
-3	omusubikororin	177
+3	omusubikororin	201
 3	Im_Otaro	164
 3	ryusei46	157
 4	みやのみずき	104
