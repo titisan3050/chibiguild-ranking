@@ -1,9 +1,9 @@
-#updated 2026-11-05 19:50 JST
-#players 334
+#updated 2026-11-05 19:55 JST
+#players 335
 0	ゆうばり	45195
 0	-瑕人-	45041
 0	むちょ。	44947
-0	omusubikororin	44095
+0	omusubikororin	44169
 0	＠RUKA	43776
 0	Teresia_	43730
 0	るるぴぃ	43581
@@ -17,18 +17,18 @@
 1	むちょ。	4685731
 1	ゆうばり	4650170
 1	てい！？	4645174
-1	omusubikororin	4363164
+1	omusubikororin	4425048
 1	-ぴあ-	4082881
 1	＠RUKA	3882260
 2	ゆうばり	359
 2	むちょ。	358
 2	-瑕人-	354
+2	omusubikororin	350
 2	＠RUKA	343
 2	るるぴぃ	340
 2	Teresia_	330
 2	shegaro09	322
 2	-ぴあ-	320
-2	omusubikororin	320
 2	みやのみずき	318
 3	ゆうばり	1892
 3	-瑕人-	1818
@@ -49,7 +49,7 @@
 4	yukipen	75
 4	てい！？	75
 4	-瑕人-	67
-4	かえで_toto	67
+4	omusubikororin	67
 5	むちょ。	600051
 5	-瑕人-	600048
 5	omusubikororin	600044
