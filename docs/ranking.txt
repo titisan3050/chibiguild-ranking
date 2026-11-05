@@ -1,4 +1,4 @@
-#updated 2026-11-06 05:40 JST
+#updated 2026-11-06 05:55 JST
 #players 434
 0	ゆうばり	46112
 0	-瑕人-	45726
@@ -46,7 +46,7 @@
 4	みやのみずき	104
 4	るるぴぃ	102
 4	むちょ。	91
-4	ltetul	85
+4	ltetul	86
 4	-瑕人-	78
 4	yukipen	75
 4	omusubikororin	72
