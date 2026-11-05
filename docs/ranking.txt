@@ -1,4 +1,4 @@
-#updated 2026-11-06 06:45 JST
+#updated 2026-11-06 06:50 JST
 #players 435
 0	ゆうばり	46112
 0	-瑕人-	45726
@@ -49,7 +49,7 @@
 4	ltetul	86
 4	-瑕人-	78
 4	yukipen	75
-4	omusubikororin	72
+4	ゆきあめ4696	73
 5	ゆうばり	700031
 5	-瑕人-	700027
 5	omusubikororin	700019
