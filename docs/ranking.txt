@@ -1,10 +1,10 @@
-#updated 2026-11-06 19:00 JST
-#players 474
+#updated 2026-11-06 19:05 JST
+#players 476
 0	ゆうばり	46112
 0	-瑕人-	45726
 0	むちょ。	45190
 0	Teresia_	45097
-0	omusubikororin	44466
+0	omusubikororin	44503
 0	オケケ＿ワンダーランド	44380
 0	びす⁄Vis	44081
 0	＠RUKA	43776
@@ -13,7 +13,7 @@
 1	むちょ。	7567683
 1	ゆうばり	7297003
 1	-瑕人-	7273357
-1	omusubikororin	6677087
+1	omusubikororin	6825901
 1	Teresia_	5715461
 1	-ぴあ-	5209502
 1	Im_Otaro	4915112
@@ -24,7 +24,7 @@
 2	-瑕人-	364
 2	Teresia_	361
 2	むちょ。	358
-2	omusubikororin	351
+2	omusubikororin	353
 2	＠RUKA	343
 2	るるぴぃ	340
 2	びす⁄Vis	330
@@ -49,8 +49,8 @@
 4	ltetul	100
 4	むちょ。	91
 4	あっきー1234	81
-4	-瑕人-	79
-5	omusubikororin	700038
+4	omusubikororin	80
+5	omusubikororin	700052
 5	ゆうばり	700031
 5	-瑕人-	700027
 5	むちょ。	700010
