@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: ranking
@@ -15,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
       - name: 集計
@@ -22,15 +27,26 @@ jobs:
           AUTO_URL: ${{ vars.AUTO_URL }}
         run: python3 build_ranking.py
       - name: 変わっていたら保存
+        id: save
         run: |
           git config user.name "ranking-bot"
           git config user.email "ranking-bot@users.noreply.github.com"
           git add docs/ranking.txt state
-          git diff --cached --quiet && exit 0
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
           git commit -q -m "ランキングを更新"
           # 同時に動いた別の集計と保存がぶつかったら、取り込んでから送り直す（新しい集計結果を優先）
           for i in 1 2 3 4 5; do
-            git pull -q --rebase -X theirs origin main && git push -q && exit 0
+            if git pull -q --rebase -X theirs origin main && git push -q; then echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0; fi
             sleep 5
           done
           exit 1
+      # 変わったときだけ、docs/ をそのまま GitHub Pages へ出す（数十秒で反映される）
+      - uses: actions/configure-pages@v6
+        if: steps.save.outputs.changed == 'true'
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.save.outputs.changed == 'true'
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v5
+        if: steps.save.outputs.changed == 'true'

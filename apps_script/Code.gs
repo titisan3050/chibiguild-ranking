@@ -172,14 +172,14 @@ function csv_() {
   return out_('time,code\n' + lines.join('\n'));
 }
 
-// ---- GitHub の集計を動かす（GitHub の定期実行は遅れたり止まったりするため、こちらから 5 分ごとに頼む）----
+// ---- GitHub の集計を動かす（GitHub の定期実行は遅れたり止まったりするため、こちらから 1 分ごとに頼む）----
 // 準備：プロジェクトの設定 → スクリプト プロパティに GH_TOKEN（chibiguild-ranking の Actions を読み書きできるトークン）を入れ、
 //       エディタで installTrigger を 1 回実行する。新しい登録があったときだけ GitHub に頼む
 function kickGithub() {
   const props = PropertiesService.getScriptProperties();
   const token = props.getProperty('GH_TOKEN');
   if (!token) return;
-  const daily = new Date().getUTCHours() === 0 && new Date().getUTCMinutes() < 5;   // 1 日 1 回は変わりがなくても動かす
+  const daily = new Date().getUTCHours() === 0 && new Date().getUTCMinutes() < 1;   // 1 日 1 回は変わりがなくても動かす
   if (props.getProperty('DIRTY') !== '1' && !daily) return;
   const res = UrlFetchApp.fetch('https://api.github.com/repos/titisan3050/chibiguild-ranking/actions/workflows/ranking.yml/dispatches', {
     method: 'post',
@@ -194,7 +194,7 @@ function kickGithub() {
 
 function installTrigger() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'kickGithub') ScriptApp.deleteTrigger(t); });
-  ScriptApp.newTrigger('kickGithub').timeBased().everyMinutes(5).create();
+  ScriptApp.newTrigger('kickGithub').timeBased().everyMinutes(1).create();
   PropertiesService.getScriptProperties().setProperty('DIRTY', '1');
   kickGithub();
 }
