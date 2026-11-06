@@ -25,7 +25,7 @@ jobs:
         run: |
           git config user.name "ranking-bot"
           git config user.email "ranking-bot@users.noreply.github.com"
-          git add docs/ranking.txt
+          git add docs/ranking.txt state
           git diff --cached --quiet && exit 0
           git commit -q -m "ランキングを更新"
           # 同時に動いた別の集計と保存がぶつかったら、取り込んでから送り直す（新しい集計結果を優先）

@@ -3,8 +3,12 @@
 //   v=256 で開始、0〜255 がデータ、257 で終わり。終わりで検査が合えば登録コードに直し、「auto」シートに 1 人 1 行で保存する。
 //   ?csv=1 で auto シートを CSV で返す（GitHub の集計が読む）。
 //
-//   データの形：種類(1 登録・2 削除) / 名前の文字数 / 名前（0〜127 はそのまま、ほかは 255,上位,下位）/
-//              登録なら 7 つの数（7 ビットずつの可変長）/ 検査 2 バイト
+//   データの形：種類(1 登録・2 削除・3 登録＋ギルド) / 名前の文字数 / 名前（0〜127 はそのまま、ほかは 255,上位,下位）/
+//              登録なら 7 つの数（7 ビットずつの可変長）/
+//              種類 3 ならギルドの 10 の数（ID・合言葉の検査値・役職・版・紋章・今週の番号・今週の貢献・先週の番号・先週の貢献・通算）
+//              ＋ギルド名（文字数と文字。マスターだけ送る）
+//              ＋加入申請への判断の数と、判断ごとに（1 承認・2 見送り）と相手の名前の検査値 / 検査 2 バイト
+//              役職 0 は「そのギルドへ加入を申請中」
 
 const SHEET_NAME = 'auto';
 const GROUPS = 16;
@@ -71,26 +75,66 @@ function decode_(b) {
     }
     name += String.fromCharCode(c);
   }
+  function varint() {
+    let x = 0, mul = 1, bt;
+    do {
+      if (i >= n) return null;
+      bt = b[i++];
+      x += (bt & 127) * mul;
+      mul *= 128;
+    } while (bt & 128);
+    return x;
+  }
   let hx = '';
   for (let k = 0; k < name.length; k++) hx += hex4_(name.charCodeAt(k));
   let body;
   if (type === 2) {
     if (i !== n) return null;
     body = '0.' + hx;
-  } else if (type === 1) {
+  } else if (type === 1 || type === 3) {
     const vals = [];
     for (let k = 0; k < 7; k++) {
-      let x = 0, mul = 1, bt;
-      do {
-        if (i >= n) return null;
-        bt = b[i++];
-        x += (bt & 127) * mul;
-        mul *= 128;
-      } while (bt & 128);
+      const x = varint();
+      if (x === null) return null;
       vals.push(x);
     }
-    if (i !== n) return null;
-    body = '1.' + hx + '.' + vals.join('.');
+    if (type === 1) {
+      if (i !== n) return null;
+      body = '1.' + hx + '.' + vals.join('.');
+    } else {
+      const g = [];
+      for (let k = 0; k < 10; k++) {
+        const x = varint();
+        if (x === null) return null;
+        g.push(x);
+      }
+      if (i >= n) return null;
+      const gl = b[i++];
+      if (gl > 8) return null;
+      let gh = '';
+      for (let k = 0; k < gl; k++) {
+        if (i >= n) return null;
+        let c = b[i++];
+        if (c === 255) {
+          if (i + 1 >= n) return null;
+          c = b[i] * 256 + b[i + 1];
+          i += 2;
+        }
+        gh += hex4_(c);
+      }
+      let dh = '';
+      if (i < n) {
+        const dn = b[i++];
+        if (dn > 8) return null;
+        for (let k = 0; k < dn; k++) {
+          const fl = varint(), hh = varint();
+          if (fl === null || hh === null || fl < 1 || fl > 2 || hh > 0xffffff) return null;
+          dh += fl.toString(16) + ('000000' + hh.toString(16)).slice(-6);
+        }
+      }
+      if (i !== n) return null;
+      body = '3.' + hx + '.' + vals.join('.') + '.' + g.join('.') + '.' + gh + '.' + dh;
+    }
   } else return null;
   const ck = ('00000' + rankCheck_(body)).slice(-6);
   return { name: name, code: 'IGR1' + body + '-' + ck };
