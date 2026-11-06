@@ -9,6 +9,24 @@
  },
  "launch": 105703,
  "rejected": {},
- "since": {},
- "weeks": {}
+ "since": {
+  "zzGuildTest": [
+   987654,
+   105702
+  ]
+ },
+ "weeks": {
+  "105702": {
+   "zzGuildTest": [
+    0,
+    987654
+   ]
+  },
+  "105703": {
+   "zzGuildTest": [
+    7,
+    987654
+   ]
+  }
+ }
 }
