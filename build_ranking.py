@@ -227,7 +227,7 @@ def guild_lines(latest: dict, state: dict):
     for gid, names in members.items():
         rows = sorted((latest[n] for n in names), key=lambda g: (g["role"] == 3 and g["name"] != "", g["ver"]), reverse=True)
         top = rows[0]
-        nm = next((g["name"] for g in rows if g["name"]), "") or "名無しのギルド"
+        nm = next((g["name"] for g in rows if g["name"] and g["name"] != "名無しのギルド"), "")
         master = next((n for n in names if latest[n]["role"] == 3), "")
         info[gid] = {"name": nm, "emblem": top["emblem"], "total": sum(latest[n]["total"] for n in names), "master": master}
 
@@ -248,7 +248,7 @@ def guild_lines(latest: dict, state: dict):
             streak = prev.get("streak", 1) + 1
         ranks, elig = [], {}
         for i, gid in enumerate(order[:REWARD_TOP]):
-            meta = info.get(gid) or (prev or {}).get("info", {}).get(str(gid)) or {"name": "名無しのギルド", "emblem": 0}
+            meta = info.get(gid) or (prev or {}).get("info", {}).get(str(gid)) or {"name": "", "emblem": 0}
             ranks.append([gid, i + 1, sc[gid], meta["name"], meta["emblem"]])
             elig[str(gid)] = sorted(n for n, (pts, g) in weeks.get(str(F), {}).items()
                                     if g == gid and pts >= 1 and n in since and since[n][0] == gid and since[n][1] < F)
