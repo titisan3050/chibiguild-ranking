@@ -1,5 +1,5 @@
-#updated 2026-11-07 19:49 JST
-#players 523
+#updated 2026-11-07 19:51 JST
+#players 524
 0	ゆうばり	46506
 0	むちょ。	46047
 0	Teresia_	45540
