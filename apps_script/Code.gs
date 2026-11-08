@@ -11,7 +11,10 @@
 //              役職 0 は「そのギルドへ加入を申請中」
 
 const SHEET_NAME = 'auto';
-const GROUPS = 16;
+const GROUPS = 48;        // 0〜15 は以前のワールド用（使用中の確かめなし）。16〜47 は今のワールド用
+const NEW_FROM = 16;      // この組からは、送信中の組に別の人が始めようとしたら「busy」と返す（データが混ざらないように）
+const BUSY_MS = 90000;    // 最後にデータが届いてから 90 秒は使用中とみなす（1 回の送信は 7 分ほどかかるので、開始からではなく最後のデータから数える。
+                          // 途中で止まった送信は 90 秒で組を空ける）
 
 function rankCheck_(body) {
   let h = 7;
@@ -29,29 +32,68 @@ function doGet(e) {
   if (p.csv) return csv_();
   const s = parseInt(p.s, 10), v = parseInt(p.v, 10);
   if (!(s >= 0 && s < GROUPS && v >= 0 && v <= 257)) return out_('bad');
+  const cache = CacheService.getScriptCache();
+  const key = 'b' + s, tkey = 't' + s;
+  // 以前のワールド（0〜15 組）は、これまでどおり 1 回ごとに鍵をかける
+  if (s < NEW_FROM) {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      if (v === 256) { cache.put(key, '', 21600); return out_('start'); }
+      let cur = cache.get(key);
+      if (cur === null) return out_('nostart');
+      if (v < 256) {
+        cur = cur.length ? cur + ',' + v : String(v);
+        if (cur.length > 3000) { cache.remove(key); return out_('long'); }
+        cache.put(key, cur, 21600);
+        return out_('ok');
+      }
+      cache.remove(key);
+      const bytes = cur.length ? cur.split(',').map(Number) : [];
+      const r = decode_(bytes);
+      if (!r) return out_('bad');
+      upsert_(r.name, r.code);
+      return out_('saved');
+    } finally {
+      lock.releaseLock();
+    }
+  }
+  // 今のワールド：開始のときだけ鍵をかけて組を押さえる。データは鍵なし（1 つの組を使うのは 1 人だけなので混ざらない）
+  if (v === 256) {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const t = cache.get(tkey);
+      if (t !== null && Date.now() - Number(t) < BUSY_MS) return out_('busy');
+      cache.put(key, '', 21600);
+      cache.put(tkey, String(Date.now()), 21600);
+      return out_('start');
+    } finally {
+      lock.releaseLock();
+    }
+  }
+  let cur = cache.get(key);
+  if (cur === null) return out_('nostart');
+  if (v < 256) {
+    cur = cur.length ? cur + ',' + v : String(v);
+    if (cur.length > 3000) { cache.remove(key); cache.remove(tkey); return out_('long'); }
+    cache.put(key, cur, 21600);
+    cache.put(tkey, String(Date.now()), 21600);   // まだ送っている：使用中を延ばす
+    return out_('ok');
+  }
+  cache.remove(key);
+  cache.remove(tkey);
+  const bytes = cur.length ? cur.split(',').map(Number) : [];
+  const r = decode_(bytes);
+  if (!r) return out_('bad');
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    const cache = CacheService.getScriptCache();
-    const key = 'b' + s;
-    if (v === 256) { cache.put(key, '', 21600); return out_('start'); }
-    let cur = cache.get(key);
-    if (cur === null) return out_('nostart');
-    if (v < 256) {
-      cur = cur.length ? cur + ',' + v : String(v);
-      if (cur.length > 3000) { cache.remove(key); return out_('long'); }
-      cache.put(key, cur, 21600);
-      return out_('ok');
-    }
-    cache.remove(key);
-    const bytes = cur.length ? cur.split(',').map(Number) : [];
-    const r = decode_(bytes);
-    if (!r) return out_('bad');
     upsert_(r.name, r.code);
-    return out_('saved');
   } finally {
     lock.releaseLock();
   }
+  return out_('saved');
 }
 
 function decode_(b) {

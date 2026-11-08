@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: ranking
@@ -17,9 +15,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
       - name: 集計
@@ -40,13 +35,3 @@ jobs:
             sleep 5
           done
           exit 1
-      # 変わったときだけ、docs/ をそのまま GitHub Pages へ出す（数十秒で反映される）
-      - uses: actions/configure-pages@v6
-        if: steps.save.outputs.changed == 'true'
-      - uses: actions/upload-pages-artifact@v5
-        if: steps.save.outputs.changed == 'true'
-        with:
-          path: docs
-      - id: deploy
-        uses: actions/deploy-pages@v5
-        if: steps.save.outputs.changed == 'true'

@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "ranking.txt")
 STATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state", "guilds.json")
 GUILD_MAX = 20          # 1 ギルドの人数の上限
-WEEK_CAP = 1000000      # 1 人 1 週の貢献の上限はない。これを超える値だけは、ありえない値としてはじく
+WEEK_CAP = 10000000     # 1 人 1 週の貢献の上限はない。これを超える値だけは、ありえない値としてはじく
 REWARD_TOP = 30         # 報酬が出る順位
 TOP = 10
 CODE_RE = re.compile(r"IGR1([0-9a-f.]+)-(\d{6})")
