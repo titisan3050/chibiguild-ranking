@@ -24,6 +24,10 @@ WEEK_CAP = 10000000     # 1 人 1 週の貢献の上限はない。これを超�
 REWARD_TOP = 30         # 報酬が出る順位
 TOP = 10
 CODE_RE = re.compile(r"IGR1([0-9a-f.]+)-(\d{6})")
+# 2026-11-08 18:56 JST、受け口を読めなかった集計で「承認された人」が消えた。その人たちを戻す
+# （最新の登録が同じギルドを指しているときだけ。いったん戻れば state に残る）
+RESTORE_APPROVED = {"1668230385": ["Teresia_"], "251881594": ["びぃ `-`"]}
+RESTORE_SINCE_WEEK = 105702   # 消える前に記録されていた、加入した週
 
 # ありえない値は弾く（ゲームの上限より少し広め）
 LIMITS = {
@@ -144,6 +148,14 @@ def guild_lines(latest: dict, state: dict):
     weeks = state.setdefault("weeks", {})
     finals = state.setdefault("finals", {})
     approved = state.setdefault("approved", {})   # ギルドID → 承認された人（合言葉なしでもメンバー）
+    for sg, ns in RESTORE_APPROVED.items():
+        for n in ns:
+            if latest.get(n) and latest[n]["gid"] == int(sg) and latest[n]["role"] > 0:
+                lst = approved.setdefault(sg, [])
+                if n not in lst:
+                    lst.append(n)
+                if n not in since or since[n][0] != int(sg):
+                    since[n] = [int(sg), RESTORE_SINCE_WEEK]
     rejected = state.setdefault("rejected", {})   # ギルドID → {見送られた人: 週}
 
     # ---- ギルドID ごとに束ねる。合言葉の検査値が食い違うときは、人数の多い方を正しいとする。役職 0 は申請中 ----
@@ -176,12 +188,13 @@ def guild_lines(latest: dict, state: dict):
                         rejected.get(str(gid), {}).pop(a, None)
                     elif a not in approved.get(str(gid), []):
                         rejected.setdefault(str(gid), {})[a] = W
-    # 承認された人は、最新の登録が同じギルドを指している間はメンバー（ほかへ移ったら外す）
+    # 承認された人は、最新の登録が同じギルドを指している間はメンバー（ほかへ移った・抜けたら外す）。
+    # 登録が見当たらないとき（読み込みの失敗・掲載 OFF）は、外さずに残しておく
     for sg in list(approved):
         gid = int(sg)
-        keep = [n for n in approved[sg] if latest.get(n) and latest[n]["gid"] == gid and gid in members]
+        keep = [n for n in approved[sg] if latest.get(n, {"gid": gid}) is not None and latest.get(n, {"gid": gid})["gid"] == gid]
         for n in keep:
-            if n not in members[gid]:
+            if latest.get(n) and gid in members and n not in members[gid]:
                 members[gid].append(n)
         if keep:
             approved[sg] = keep
@@ -350,6 +363,12 @@ def main():
             break
         if not found and any("IGR1" in c for c in row):
             bad += 1
+
+    # 1 件も読めなかったとき（受け口が止まっている・通信の失敗）は、何も書き換えない。
+    # 空のまま集計すると、名簿・承認・加入した週がすべて消えてしまう
+    if ok == 0:
+        print("登録を 1 件も読めなかったので、今回は書き換えない", file=sys.stderr)
+        return
 
     cats = ["atk", "kills", "tower", "rebirths", "dragon", "raid"]
     jst = timezone(timedelta(hours=9))
