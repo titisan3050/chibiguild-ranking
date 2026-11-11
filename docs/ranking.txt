@@ -1,5 +1,5 @@
-#updated 2026-11-12 07:31 JST
-#players 962
+#updated 2026-11-12 07:32 JST
+#players 963
 0	ゆうばり	48343
 0	Teresia_	47883
 0	真茶 ラテ	47590
