@@ -1,5 +1,5 @@
-#updated 2026-11-14 02:58 JST
-#players 1059
+#updated 2026-11-14 02:59 JST
+#players 1060
 0	ゆうばり	48856
 0	＊miltea＊	48027
 0	Teresia_	47975
