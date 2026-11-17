@@ -1,5 +1,5 @@
-#updated 2026-11-17 12:20 JST
-#players 1178
+#updated 2026-11-17 12:21 JST
+#players 1180
 0	ゆうばり	49089
 0	＊miltea＊	48653
 0	SantosNibra	48644
