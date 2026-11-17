@@ -1,5 +1,5 @@
-#updated 2026-11-17 20:34 JST
-#players 1188
+#updated 2026-11-17 20:37 JST
+#players 1190
 0	ゆうばり	49441
 0	＊miltea＊	48976
 0	真茶 ラテ	48905
