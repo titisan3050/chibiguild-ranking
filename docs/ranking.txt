@@ -1,4 +1,4 @@
-#updated 2026-11-18 23:11 JST
+#updated 2026-11-18 23:12 JST
 #players 1234
 0	ゆうばり	49441
 0	＊miltea＊	48976
@@ -19,7 +19,7 @@
 1	Uyu-	24755152
 1	SantosNibra	23554452
 1	Teresia_	23406260
-1	Im_Otaro	22751243
+1	Im_Otaro	22759835
 2	ゆうばり	398
 2	＊miltea＊	395
 2	真茶 ラテ	394
