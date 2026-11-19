@@ -1,5 +1,5 @@
-#updated 2026-11-20 03:38 JST
-#players 1257
+#updated 2026-11-20 03:39 JST
+#players 1258
 0	ゆうばり	49717
 0	＊miltea＊	49308
 0	あーみあ	49000
